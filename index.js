@@ -1,10 +1,8 @@
 'use strict';
 
-var fs = require('fs');
+module.exports = function (dictionary) {
 
-module.exports = function (filePath) {
-
-    return (function (filePath) {
+    return (function () {
 
         var dict = [],
             ALPHABET = "abcdefghijklmnopqrstuvwxyz'".split(""),
@@ -12,21 +10,23 @@ module.exports = function (filePath) {
 
         function insert(word, rank) {
 
-            if (rank !== void 0 && typeof rank !== 'number') {
+            var i,
+                subDict = dict,
+                letters;
+
+            if (rank !== undefined && typeof rank !== 'number') {
                 throw new TypeError('Word\'s rank must be a number');
             }
 
-            if (word === void 0) {
+            if (word === undefined) {
                 throw new TypeError('Word cannot be undefined');
             }
 
             word = word.toString().toLowerCase();
 
-            var letters = word.split('');
+            letters = word.split('');
 
-            var subDict = dict;
-
-            for(var i = 0; i < letters.length; i++) {
+            for (i = 0; i < letters.length; i++) {
 
                 if (!subDict[letters[i]]) {
 
@@ -37,25 +37,24 @@ module.exports = function (filePath) {
             }
 
             //Store only the rank of the word.
-            if (rank !== void 0) {
+            if (rank !== undefined) {
                 subDict[ETX] = rank;
-            }else {
-                subDict[ETX] = (subDict[ETX])? subDict[ETX] + 1 : 1;
+            } else {
+                subDict[ETX] = (subDict[ETX]) ? subDict[ETX] + 1 : 1;
             }
         }
 
-        function remove(word) {
 
-            if (lookup(word, {sugget: false}).found) {
-                insert(word, 0);
-            }
-        }
 
         function lookup(word, opts) {
 
             opts = opts || {};
 
-            var result = {};
+            var i,
+                letters,
+                subDict = dict,
+                result = {};
+
 
             word = word.toString().toLowerCase();
 
@@ -64,27 +63,35 @@ module.exports = function (filePath) {
                 return {found: true, word: word};
             }
 
-            var letters = word.split('');
 
-            var subDict = dict;
+            letters = word.split('');
 
-            for(var i = 0; i < letters.length && subDict; i++) {
+            for (i = 0; i < letters.length && subDict; i++) {
 
                 subDict = subDict[letters[i]];
 
             }
 
-            result.found = (subDict && subDict[ETX])? true : false;
+            result.found = (subDict && subDict[ETX]) ? true : false;
             result.word = word;
 
             if (result.found) {
                 result.rank = subDict[ETX];
-            }else if (opts.suggest === void 0 || opts.suggest) {
+            } else if (opts.suggest === undefined || opts.suggest) {
                 result.suggestions = suggest(word, opts);
             }
 
             return result;
         }
+
+
+        function remove(word) {
+
+            if (lookup(word, {sugget: false}).found) {
+                insert(word, 0);
+            }
+        }
+
 
         function edits(word) {
 
@@ -95,8 +102,8 @@ module.exports = function (filePath) {
                 opts = {suggest: false};
 
             //Deleting one letter
-            for (i=0; i < word.length; i++){
-                edit = (word.slice(0, i) + word.slice(i+1));
+            for (i = 0; i < word.length; i++) {
+                edit = (word.slice(0, i) + word.slice(i + 1));
                 edit = lookup(edit, opts);
                 if (edit.found) {
                     results.push(edit);
@@ -104,8 +111,8 @@ module.exports = function (filePath) {
             }
 
             //Swaping letters
-            for (i=0; i < word.length-1; i++){
-                edit = (word.slice(0, i) + word.slice(i+1, i+2) + word.slice(i, i+1) + word.slice(i+2));
+            for (i = 0; i < word.length - 1; i++) {
+                edit = (word.slice(0, i) + word.slice(i + 1, i + 2) + word.slice(i, i + 1) + word.slice(i + 2));
 
                 edit = lookup(edit, opts);
                 if (edit.found) {
@@ -114,10 +121,10 @@ module.exports = function (filePath) {
             }
 
             //Replacing one letter
-            for (i = 0; i < word.length; i++){
+            for (i = 0; i < word.length; i++) {
 
                 for (j = 0; j < ALPHABET.length; j++) {
-                    edit = (word.slice(0, i) + ALPHABET[j] + word.slice(i+1));
+                    edit = (word.slice(0, i) + ALPHABET[j] + word.slice(i + 1));
                     edit = lookup(edit, opts);
                     if (edit.found) {
                         results.push(edit);
@@ -138,23 +145,28 @@ module.exports = function (filePath) {
             }
 
             return results;
-        };
+        }
 
 
         function suggest(word, opts) {
 
             opts = opts || {};
 
-            var suggestions = [],
+            var i,
+                suggestions = [],
                 edit1 = [],
                 edit2 = [],
                 suggestionsLimit = opts.suggestionsLimit || 10;
+
+            function equal(word) {
+                return this.word === word.word;
+            }
 
             word = word.toString().toLowerCase();
 
             edit1 = edits(word);
 
-            for (var i = 0; i < edit1.length && edit1.length < suggestionsLimit; i++) {
+            for (i = 0; i < edit1.length && edit1.length < suggestionsLimit; i++) {
                 edit2 = edit2.concat(edits(edit1[i].word));
             }
 
@@ -166,14 +178,14 @@ module.exports = function (filePath) {
                 return word2.rank - word1.rank;
             });
 
-            for (var i = 0; i < edit1.length && suggestions.length < suggestionsLimit; i++) {
-                if (!suggestions.some(function (suggestion){ return suggestion.word === edit1[i].word;})) {
+            for (i = 0; i < edit1.length && suggestions.length < suggestionsLimit; i++) {
+                if (!suggestions.some(equal, edit1[i])) {
                     suggestions.push(edit1[i]);
                 }
             }
 
-            for (var i = 0; i < edit2.length && suggestions.length < suggestionsLimit; i++) {
-                if (!suggestions.some(function (suggestion) { return suggestion.word === edit2[i].word; })){
+            for (i = 0; i < edit2.length && suggestions.length < suggestionsLimit; i++) {
+                if (!suggestions.some(equal, edit2[i])) {
                     suggestions.push(edit2[i]);
                 }
             }
@@ -186,25 +198,21 @@ module.exports = function (filePath) {
         }
 
 
+        function build() {
 
-        function build(filePath){
+            if (dictionary !== undefined && typeof dictionary === 'string') {
+                var i,
+                    words = dictionary.split(' ');
 
-            var wordsString = fs.readFileSync(filePath).toString();
+                for (i = 0; i < words.length; i++) {
+                    insert(words[i], +words[++i]);
+                }
 
-            var lines = wordsString.split('\n');
-            var line;
-            var word;
-
-            for (var i = 0; i < lines.length; i++) {
-                word = lines[i].split(' ');
-                insert(word[0], +word[1]);
+                dictionary = '';
             }
-
         }
 
-        if (filePath) {
-            build(filePath);
-        }
+        build();
 
 
         return {
@@ -217,5 +225,5 @@ module.exports = function (filePath) {
 
 
 
-    }(filePath));
+    }());
 };
