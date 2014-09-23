@@ -8,6 +8,7 @@ module.exports = function (dictionary) {
             ALPHABET = "abcdefghijklmnopqrstuvwxyz'".split(""),
             ETX = String.fromCharCode(3);   //End of Text Character
 
+
         function insert(word, rank) {
 
             var i,
@@ -43,7 +44,6 @@ module.exports = function (dictionary) {
                 subDict[ETX] = (subDict[ETX]) ? subDict[ETX] + 1 : 1;
             }
         }
-
 
 
         function lookup(word, opts) {
@@ -148,6 +148,11 @@ module.exports = function (dictionary) {
         }
 
 
+        function equal(word) {
+            return this.word === word.word;
+        }
+
+
         function suggest(word, opts) {
 
             opts = opts || {};
@@ -158,9 +163,7 @@ module.exports = function (dictionary) {
                 edit2 = [],
                 suggestionsLimit = opts.suggestionsLimit || 10;
 
-            function equal(word) {
-                return this.word === word.word;
-            }
+
 
             word = word.toString().toLowerCase();
 
@@ -193,8 +196,77 @@ module.exports = function (dictionary) {
             return suggestions;
         }
 
+
+        function fetchWords(subDict, prefix) {
+
+            var key,
+                results = [];
+
+            for (key in subDict) {
+
+                if (subDict.hasOwnProperty(key) && subDict[key][ETX]) {
+                    results.push({word: prefix + key, rank: subDict[key][ETX]});
+                }
+            }
+
+            return results;
+        }
+
         function search(prefix, opts) {
 
+            opts = opts || {};
+
+            if (opts.depth === undefined) {
+                opts.depth = 3;
+            }
+
+            var i,
+                key,
+                letters,
+                subDict = dict,
+                results = [];
+
+            if (!opts.depth) {
+                return results;
+            }
+
+            prefix = prefix.toString().toLowerCase();
+
+            //Ignore numbers
+            if (!Number.isNaN(+prefix)) {
+                return results;
+            }
+
+
+            letters = prefix.split('');
+
+            for (i = 0; i < letters.length && subDict; i++) {
+
+                subDict = subDict[letters[i]];
+
+            }
+
+            if (!subDict) {
+                return results;
+            }
+
+            results = results.concat(fetchWords(subDict, prefix));
+
+            for (key in subDict) {
+                if (subDict.hasOwnProperty(key)) {
+                    results = results.concat(search(prefix + key, {depth: opts.depth - 1}));
+                }
+            }
+
+            for (i = 0; i < results.length; i++) {
+                if (lookup(prefix, {suggest: false}).found && !results.some(equal, {word: prefix})) {
+                    results.push({word: prefix, rank: lookup(prefix).rank});
+                }
+            }
+
+            return results.sort(function (word1, word2) {
+                return word2.rank - word1.rank;
+            });
         }
 
 
