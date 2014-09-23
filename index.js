@@ -258,10 +258,8 @@ module.exports = function (dictionary) {
                 }
             }
 
-            for (i = 0; i < results.length; i++) {
-                if (lookup(prefix, {suggest: false}).found && !results.some(equal, {word: prefix})) {
-                    results.push({word: prefix, rank: lookup(prefix).rank});
-                }
+            if (lookup(prefix, {suggest: false}).found && !results.some(equal, {word: prefix})) {
+                results.push({word: prefix, rank: lookup(prefix).rank});
             }
 
             return results.sort(function (word1, word2) {
