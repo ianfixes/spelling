@@ -258,8 +258,8 @@ module.exports = function (dictionary) {
                 }
             }
 
-            if (lookup(prefix, {suggest: false}).found && !results.some(equal, {word: prefix})) {
-                results.push({word: prefix, rank: lookup(prefix).rank});
+            if (subDict[ETX] && !results.some(equal, {word: prefix})) {
+                results.push({word: prefix, rank: subDict[ETX]});
             }
 
             return results.sort(function (word1, word2) {
