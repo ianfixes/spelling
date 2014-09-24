@@ -5,7 +5,7 @@ module.exports = function (dictionary) {
     return (function () {
 
         var dict = [],
-            ALPHABET = "abcdefghijklmnopqrstuvwxyz'".split(""),
+            ALPHABETS = "abcdefghijklmnopqrstuvwxyz'".split(""),
             ETX = String.fromCharCode(3);   //End of Text Character
 
 
@@ -30,7 +30,6 @@ module.exports = function (dictionary) {
             for (i = 0; i < letters.length; i++) {
 
                 if (!subDict[letters[i]]) {
-
                     subDict[letters[i]] = {};
                 }
 
@@ -48,13 +47,12 @@ module.exports = function (dictionary) {
 
         function lookup(word, opts) {
 
-            opts = opts || {};
-
             var i,
                 letters,
                 subDict = dict,
                 result = {};
 
+            opts = opts || {};
 
             word = word.toString().toLowerCase();
 
@@ -123,8 +121,8 @@ module.exports = function (dictionary) {
             //Replacing one letter
             for (i = 0; i < word.length; i++) {
 
-                for (j = 0; j < ALPHABET.length; j++) {
-                    edit = (word.slice(0, i) + ALPHABET[j] + word.slice(i + 1));
+                for (j = 0; j < ALPHABETS.length; j++) {
+                    edit = (word.slice(0, i) + ALPHABETS[j] + word.slice(i + 1));
                     edit = lookup(edit, opts);
                     if (edit.found) {
                         results.push(edit);
@@ -135,8 +133,8 @@ module.exports = function (dictionary) {
             //Inserting one letter
             for (i = 0; i <= word.length; i++) {
 
-                for (j = 0; j < ALPHABET.length; j++) {
-                    edit = (word.slice(0, i) + ALPHABET[j] + word.slice(i));
+                for (j = 0; j < ALPHABETS.length; j++) {
+                    edit = (word.slice(0, i) + ALPHABETS[j] + word.slice(i));
                     edit = lookup(edit, opts);
                     if (edit.found) {
                         results.push(edit);
@@ -155,15 +153,13 @@ module.exports = function (dictionary) {
 
         function suggest(word, opts) {
 
-            opts = opts || {};
-
             var i,
                 suggestions = [],
                 edit1 = [],
                 edit2 = [],
                 suggestionsLimit = opts.suggestionsLimit || 10;
 
-
+            opts = opts || {};
 
             word = word.toString().toLowerCase();
 
@@ -212,7 +208,14 @@ module.exports = function (dictionary) {
             return results;
         }
 
-        function search(prefix, opts) {
+        function doSearch(prefix, opts) {
+
+            var i,
+                key,
+                letters,
+                subDict = dict,
+                results = [];
+
 
             opts = opts || {};
 
@@ -220,11 +223,6 @@ module.exports = function (dictionary) {
                 opts.depth = 3;
             }
 
-            var i,
-                key,
-                letters,
-                subDict = dict,
-                results = [];
 
             if (!opts.depth) {
                 return results;
@@ -237,13 +235,10 @@ module.exports = function (dictionary) {
                 return results;
             }
 
-
             letters = prefix.split('');
 
             for (i = 0; i < letters.length && subDict; i++) {
-
                 subDict = subDict[letters[i]];
-
             }
 
             if (!subDict) {
@@ -254,19 +249,29 @@ module.exports = function (dictionary) {
 
             for (key in subDict) {
                 if (subDict.hasOwnProperty(key)) {
-                    results = results.concat(search(prefix + key, {depth: opts.depth - 1}));
+                    results = results.concat(doSearch(prefix + key, {depth: opts.depth - 1}));
                 }
             }
 
-            if (subDict[ETX] && !results.some(equal, {word: prefix})) {
-                results.push({word: prefix, rank: subDict[ETX]});
-            }
-
-            return results.sort(function (word1, word2) {
-                return word2.rank - word1.rank;
-            });
+            return results;
         }
 
+        function search(prefix, opts) {
+
+            var results,
+                word;
+
+            results = doSearch(prefix, opts);
+
+            word = lookup(prefix, {suggest: false});
+
+            if (word.found) {
+                results.push({word: prefix, rank: word.rank});
+            }
+
+            return results.sort(function (word1, word2) {return word2.rank - word1.rank; });
+
+        }
 
         function build() {
 
