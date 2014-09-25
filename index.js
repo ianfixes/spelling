@@ -61,7 +61,7 @@ module.exports = function (dictionary) {
 
         //Ignore numbers
         if (!Number.isNaN(+word)) {
-            return {found: true, word: word};
+            return {found: true, word: word, rank: 0};
         }
 
 
@@ -233,11 +233,6 @@ module.exports = function (dictionary) {
         }
 
         prefix = prefix.toString().toLowerCase();
-
-        //Ignore numbers
-        if (!Number.isNaN(+prefix)) {
-            return results;
-        }
 
         letters = prefix.split('');
 
