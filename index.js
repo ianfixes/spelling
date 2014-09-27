@@ -41,6 +41,8 @@ module.exports = function (dictionary) {
         } else {
             subDict[ETX] = (subDict[ETX]) ? subDict[ETX] + 1 : 1;
         }
+
+        return this;
     }
 
 
@@ -55,6 +57,16 @@ module.exports = function (dictionary) {
 
         if (opts.suggest === undefined) {
             opts.suggest = true;
+        }
+
+        if (Array.isArray(word)) {
+            result = [];
+
+            for (i = 0; i < word.length; i++) {
+                result.push(lookup(word[i], opts));
+            }
+
+            return result;
         }
 
         word = word.toString().toLowerCase();
@@ -91,6 +103,8 @@ module.exports = function (dictionary) {
         if (lookup(word, {sugget: false}).found) {
             insert(word, 0);
         }
+
+        return this;
     }
 
 
@@ -159,16 +173,16 @@ module.exports = function (dictionary) {
         var i,
             suggestions = [],
             edit1 = [],
-            edit2 = [],
-            suggestionsLimit = opts.suggestionsLimit || 10;
+            edit2 = [];
 
         opts = opts || {};
+        opts.suggestionsLimit = opts.suggestionsLimit || 10;
 
         word = word.toString().toLowerCase();
 
         edit1 = edits(word);
 
-        for (i = 0; i < edit1.length && edit1.length < suggestionsLimit; i++) {
+        for (i = 0; i < edit1.length && edit1.length < opts.suggestionsLimit; i++) {
             edit2 = edit2.concat(edits(edit1[i].word));
         }
 
@@ -180,13 +194,13 @@ module.exports = function (dictionary) {
             return word2.rank - word1.rank;
         });
 
-        for (i = 0; i < edit1.length && suggestions.length < suggestionsLimit; i++) {
+        for (i = 0; i < edit1.length && suggestions.length < opts.suggestionsLimit; i++) {
             if (!suggestions.some(equal, edit1[i])) {
                 suggestions.push(edit1[i]);
             }
         }
 
-        for (i = 0; i < edit2.length && suggestions.length < suggestionsLimit; i++) {
+        for (i = 0; i < edit2.length && suggestions.length < opts.suggestionsLimit; i++) {
             if (!suggestions.some(equal, edit2[i])) {
                 suggestions.push(edit2[i]);
             }
