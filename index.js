@@ -22,7 +22,7 @@ module.exports = function (dictionary) {
             throw new TypeError('Word cannot be undefined');
         }
 
-        word = word.toString().toLowerCase();
+        word = word.toString().toLowerCase().trim();
 
         letters = word.split('');
 
@@ -69,7 +69,7 @@ module.exports = function (dictionary) {
             return result;
         }
 
-        word = word.toString().toLowerCase();
+        word = word.toString().toLowerCase().trim();
 
         //Ignore numbers
         if (!Number.isNaN(+word)) {
