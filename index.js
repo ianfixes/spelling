@@ -11,8 +11,7 @@ module.exports = function (dictionary) {
     function insert(word, rank) {
 
         var i,
-            subDict = dict,
-            letters;
+            subDict = dict;
 
         if (rank !== undefined && typeof rank !== 'number') {
             throw new TypeError('Word\'s rank must be a number');
@@ -24,15 +23,11 @@ module.exports = function (dictionary) {
 
         word = word.toString().toLowerCase().trim();
 
-        letters = word.split('');
-
-        for (i = 0; i < letters.length; i++) {
-
-            if (!subDict[letters[i]]) {
-                subDict[letters[i]] = {};
+        for (i = 0; i < word.length; i++) {
+            if (!subDict[word[i]]) {
+                subDict[word[i]] = {};
             }
-
-            subDict = subDict[letters[i]];
+            subDict = subDict[word[i]];
         }
 
         //Store only the rank of the word.
@@ -49,7 +44,6 @@ module.exports = function (dictionary) {
     function lookup(word, opts) {
 
         var i,
-            letters,
             subDict = dict,
             result = {};
 
@@ -76,13 +70,8 @@ module.exports = function (dictionary) {
             return {found: true, word: word, rank: 0};
         }
 
-
-        letters = word.split('');
-
-        for (i = 0; i < letters.length && subDict; i++) {
-
-            subDict = subDict[letters[i]];
-
+        for (i = 0; i < word.length && subDict; i++) {
+            subDict = subDict[word[i]];
         }
 
         result.found = (subDict && subDict[ETX]) ? true : false;
@@ -99,11 +88,9 @@ module.exports = function (dictionary) {
 
 
     function remove(word) {
-
         if (lookup(word, {sugget: false}).found) {
             insert(word, 0);
         }
-
         return this;
     }
 
@@ -128,7 +115,6 @@ module.exports = function (dictionary) {
         //Swaping letters
         for (i = 0; i < word.length - 1; i++) {
             edit = (word.slice(0, i) + word.slice(i + 1, i + 2) + word.slice(i, i + 1) + word.slice(i + 2));
-
             edit = lookup(edit, opts);
             if (edit.found) {
                 results.push(edit);
@@ -137,7 +123,6 @@ module.exports = function (dictionary) {
 
         //Replacing one letter
         for (i = 0; i < word.length; i++) {
-
             for (j = 0; j < ALPHABETS.length; j++) {
                 edit = (word.slice(0, i) + ALPHABETS[j] + word.slice(i + 1));
                 edit = lookup(edit, opts);
@@ -149,7 +134,6 @@ module.exports = function (dictionary) {
 
         //Inserting one letter
         for (i = 0; i <= word.length; i++) {
-
             for (j = 0; j < ALPHABETS.length; j++) {
                 edit = (word.slice(0, i) + ALPHABETS[j] + word.slice(i));
                 edit = lookup(edit, opts);
@@ -216,7 +200,6 @@ module.exports = function (dictionary) {
             results = [];
 
         for (key in subDict) {
-
             if (subDict.hasOwnProperty(key) && subDict[key][ETX]) {
                 results.push({word: prefix + key, rank: subDict[key][ETX]});
             }
@@ -226,35 +209,13 @@ module.exports = function (dictionary) {
     }
 
 
-    function doSearch(prefix, opts) {
+    function doSearch(prefix, subDict, opts) {
 
         var i,
             key,
-            letters,
-            subDict = dict,
             results = [];
 
-
-        opts = opts || {};
-
-        if (opts.depth === undefined) {
-            opts.depth = 3;
-        }
-
-
-        if (!opts.depth) {
-            return results;
-        }
-
-        prefix = prefix.toString().toLowerCase();
-
-        letters = prefix.split('');
-
-        for (i = 0; i < letters.length && subDict; i++) {
-            subDict = subDict[letters[i]];
-        }
-
-        if (!subDict) {
+        if (!opts.depth || !subDict) {
             return results;
         }
 
@@ -262,7 +223,7 @@ module.exports = function (dictionary) {
 
         for (key in subDict) {
             if (subDict.hasOwnProperty(key)) {
-                results = results.concat(doSearch(prefix + key, {depth: opts.depth - 1}));
+                results = results.concat(doSearch(prefix + key, subDict[key], {depth: opts.depth - 1}));
             }
         }
 
@@ -272,10 +233,28 @@ module.exports = function (dictionary) {
 
     function search(prefix, opts) {
 
-        var results,
+        var i,
+            results = [],
+            subDict = dict,
             word;
 
-        results = doSearch(prefix, opts);
+        opts = opts || {};
+
+        if (opts.depth === undefined) {
+            opts.depth = 3;
+        }
+
+        prefix = prefix.toString().toLowerCase().trim();
+
+        for (i = 0; i < prefix.length && subDict; i++) {
+            subDict = subDict[prefix[i]];
+        }
+
+        if (!subDict) {
+            return results;
+        }
+
+        results = doSearch(prefix, subDict, opts);
 
         word = lookup(prefix, {suggest: false});
 
