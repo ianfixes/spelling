@@ -1,4 +1,4 @@
-spelling [![Build Status](https://travis-ci.org/asahaf/spelling.svg)](https://travis-ci.org/asahaf/spelling)
+spelling [![Build Status](https://travis-ci.org/asahaf/spelling.svg?branch=master)](https://travis-ci.org/asahaf/spelling)
 ========
 
 > A spelling checker that provides words suggestions, and the facility to search for words with a specific prefix.
