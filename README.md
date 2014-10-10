@@ -1,8 +1,12 @@
 spelling
 ========
 
-> spelling is a spelling checker which provides suggestions and the facility to search for words with a specific prefix.
+> A spelling checker that provides words suggestions, and the facility to search for words with a specific prefix.
 
+## Install
+```
+$ npm install --save spelling
+```
 
 # Usage
 ```
