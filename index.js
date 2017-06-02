@@ -270,7 +270,8 @@ module.exports = function (dictionary) {
 
     function build() {
 
-        if (dictionary !== undefined && typeof dictionary === 'string') {
+	if (dictionary === undefined) return;
+        if (typeof dictionary === 'string') {
             var i,
                 words = dictionary.split(' ');
 
@@ -279,7 +280,12 @@ module.exports = function (dictionary) {
             }
 
             dictionary = '';
-        }
+        } else if (Array.isArray(dictionary)) {
+	    dictionary.forEach(function (elem) {
+		insert(elem, 1);
+	    });
+	    dictionary = '';
+	}
     }
 
     build();
