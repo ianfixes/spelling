@@ -5,7 +5,7 @@
 module.exports = function (dictionary) {
 
     var dict = [],
-        ALPHABETS = "abcdefghijklmnopqrstuvwxyz'-".split(""),
+        ALPHABETS = "abcdefghijklmnopqrstuvwxyz'- ".split(""),
         ETX = String.fromCharCode(3);   //End of Text Character
 
 
