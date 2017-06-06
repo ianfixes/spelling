@@ -1,10 +1,11 @@
 /*jslint plusplus: true */
 'use strict';
 
+
 module.exports = function (dictionary) {
 
     var dict = [],
-        ALPHABETS = "abcdefghijklmnopqrstuvwxyz'".split(""),
+        ALPHABETS = "abcdefghijklmnopqrstuvwxyz'- ".split(""),
         ETX = String.fromCharCode(3);   //End of Text Character
 
 
@@ -269,7 +270,8 @@ module.exports = function (dictionary) {
 
     function build() {
 
-        if (dictionary !== undefined && typeof dictionary === 'string') {
+	if (dictionary === undefined) return;
+        if (typeof dictionary === 'string') {
             var i,
                 words = dictionary.split(' ');
 
@@ -278,7 +280,12 @@ module.exports = function (dictionary) {
             }
 
             dictionary = '';
-        }
+        } else if (Array.isArray(dictionary)) {
+	    dictionary.forEach(function (elem) {
+		insert(elem, 1);
+	    });
+	    dictionary = '';
+	}
     }
 
     build();

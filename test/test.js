@@ -204,5 +204,36 @@ describe('Test loading and building the dictionary', function () {
         expect(dict.lookup('are').found).to.equal(true);
     });
 
-});
+    it('words lookup on an array-based dictionary', function () {
+        var dict = new spelling(['wilkes-barre', 'philadelphia']);
 
+        expect(dict.lookup('hello').found).to.equal(false);
+        expect(dict.lookup('wilkes-barre').found).to.equal(true);
+	    var result = dict.lookup('wilkes barre')
+        expect(result.found).to.equal(false);
+        expect(result.suggestions[0].word).to.equal('wilkes-barre');
+
+    });
+
+    it("doesn't attempt to handle trailing spaces", function () {
+        var dict = new spelling(['cape cod', 'hyannis']);
+
+        expect(dict.lookup('cape-cod').found).to.equal(false);
+        expect(dict.lookup('cape cod').found).to.equal(true);
+	    var result = dict.lookup('cape cod ')
+        //expect(result.found).to.equal(false);
+        expect(result.suggestions).to.equal(undefined);
+    });
+
+    it('handles hyphens', function () {
+        var dict = new spelling(['cape cod', 'hyannis']);
+
+        expect(dict.lookup('cape-cod').found).to.equal(false);
+        expect(dict.lookup('cape cod').found).to.equal(true);
+	    var result = dict.lookup('cape-cod')
+        expect(result.found).to.equal(false);
+        expect(result.suggestions[0].word).to.equal('cape cod');
+
+    });
+
+});

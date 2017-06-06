@@ -22,7 +22,7 @@ console.log(dict.lookup('hei'));
 /*
 { found: false,
   word: 'hei',
-  suggestions: 
+  suggestions:
    [ { found: true, word: 'he', rank: 38410 },
      { found: true, word: 'her', rank: 14182 },
      { found: true, word: 'hey', rank: 529 },
@@ -42,7 +42,7 @@ console.log(dict.lookup('yellows'));
 /*
 { found: false,
   word: 'yellows',
-  suggestions: 
+  suggestions:
    [ { found: true, word: 'yellow', rank: 380 },
      { found: true, word: 'yellowy', rank: 2 },
      { found: true, word: 'fellow', rank: 551 },
@@ -79,6 +79,21 @@ console.log(dict.search('manu', {depth: 8}));
 
 ```
 
+## Custom Dictionaries
+
+If you'd prefer to receive suggestions on people or place names (for which there is no apparent "rank"), you can simply supply an array of those names.
+
+```
+var spelling = require('./');
+
+var dict = new spelling(['wilkes-barre', 'philadelphia']);
+
+console.log(dict.lookup('wilkes barre'));
+//{ found: false, word: 'wilkes-barre', rank: 1 }
+```
+
+Otherwise, the dictionary format is one big string of pairs, space delimited: `word1 rank1 word2 rank2 [...]` where the ranks are integers.
+
 # API
 ## .lookup(word, [opts])
 
@@ -106,7 +121,7 @@ console.log(dict.lookup('hei'));
 /*
 { found: false,
   word: 'hei',
-  suggestions: 
+  suggestions:
    [ { found: true, word: 'he', rank: 38410 },
      { found: true, word: 'her', rank: 14182 },
      { found: true, word: 'hey', rank: 529 },
