@@ -1,5 +1,3 @@
-'use strict';
-
 /*
 Hunspell English dictionary is used to build this dictionary.
 http://wordlist.aspell.net
