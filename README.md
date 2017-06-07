@@ -1,4 +1,4 @@
-spelling [![Build Status](https://travis-ci.org/asahaf/spelling.svg?branch=master)](https://travis-ci.org/asahaf/spelling)
+spelling [![Build Status](https://travis-ci.org/ifreecarve/spelling.svg?branch=master)](https://travis-ci.org/ifreecarve/spelling) [![npm version](https://badge.fury.io/js/spelling.svg)](https://badge.fury.io/js/spelling)
 ========
 
 > A spelling checker that provides words suggestions, and the facility to search for words with a specific prefix.
@@ -199,3 +199,6 @@ Remove word from the dictionary.
 `{String} word`
 
 The `word` to be removed from the dictionary.
+
+# Authors
+`spelling` was written by [Ahmed AlSahaf](https://github.com/asahaf) but is now maintained here.

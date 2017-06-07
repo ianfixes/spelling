@@ -1,24 +1,32 @@
 {
   "name": "spelling",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A spelling checker that provides words suggestions, and the facility to search for words with a specific prefix.",
-  "repository": "asahaf/spelling",
+  "repository": "ifreecarve/spelling",
   "author": {
-    "name": "Ahmed AlSahaf",
-    "email": "sahaf525@gmail.com",
-    "url": "https://github.com/asahaf"
+    "name": "Ian Katz",
+    "email": "ifreecarve@gmail.com",
+    "url": "https://github.com/ifreecarve"
   },
+  "contributors": [
+    {
+      "name": "Ahmed AlSahaf",
+      "email": "sahaf525@gmail.com",
+      "url": "https://github.com/asahaf"
+    }
+  ],
   "bugs": {
-    "url": "https://github.com/asahaf/spelling/issues"
+    "url": "https://github.com/ifreecarve/spelling/issues"
   },
-  "homepage": "https://github.com/asahaf/spelling",
+  "homepage": "https://github.com/ifreecarve/spelling",
   "license": "MIT",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "posttest": "eslint ."
   },
   "engines": {
     "node": ">=0.10.0"
@@ -34,7 +42,8 @@
     "spell-checking"
   ],
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*"
+    "chai": "*",
+    "eslint": "^3.19.0",
+    "mocha": "*"
   }
 }
