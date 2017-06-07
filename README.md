@@ -199,3 +199,6 @@ Remove word from the dictionary.
 `{String} word`
 
 The `word` to be removed from the dictionary.
+
+# Authors
+`spelling` was written by [Ahmed AlSahaf](https://github.com/asahaf) but is now maintained here.
