@@ -1,17 +1,15 @@
 /*jslint plusplus: true */
 'use strict';
 
-
 module.exports = function (dictionary) {
 
     var dict = [],
         ALPHABETS = "abcdefghijklmnopqrstuvwxyz'- ".split(""),
         ETX = String.fromCharCode(3);   //End of Text Character
 
-
     function insert(word, rank) {
-
         var i,
+            c,
             subDict = dict;
 
         if (rank !== undefined && typeof rank !== 'number') {
@@ -24,11 +22,9 @@ module.exports = function (dictionary) {
 
         word = word.toString().toLowerCase().trim();
 
-        for (i = 0; i < word.length; i++) {
-            if (!subDict[word[i]]) {
-                subDict[word[i]] = {};
-            }
-            subDict = subDict[word[i]];
+        for (i = 0; c = word.charAt(i); i++) {
+            subDict[c] = subDict[c] || {};
+            subDict = subDict[c];
         }
 
         //Store only the rank of the word.
@@ -95,41 +91,34 @@ module.exports = function (dictionary) {
         return this;
     }
 
-
     function edits(word) {
-
         var i,
             j,
             edit,
             results = [],
-            opts = {suggest: false};
+            checkResult = function (candidate) {
+                var response = lookup(candidate, { suggest: false });
+                if (response.found) {
+                    results.push(response);
+                }
+            };
 
         //Deleting one letter
         for (i = 0; i < word.length; i++) {
-            edit = (word.slice(0, i) + word.slice(i + 1));
-            edit = lookup(edit, opts);
-            if (edit.found) {
-                results.push(edit);
-            }
+            checkResult(word.slice(0, i) + word.slice(i + 1));
         }
 
         //Swaping letters
         for (i = 0; i < word.length - 1; i++) {
             edit = (word.slice(0, i) + word.slice(i + 1, i + 2) + word.slice(i, i + 1) + word.slice(i + 2));
-            edit = lookup(edit, opts);
-            if (edit.found) {
-                results.push(edit);
-            }
+            checkResult(edit);
         }
 
         //Replacing one letter
         for (i = 0; i < word.length; i++) {
             for (j = 0; j < ALPHABETS.length; j++) {
                 edit = (word.slice(0, i) + ALPHABETS[j] + word.slice(i + 1));
-                edit = lookup(edit, opts);
-                if (edit.found) {
-                    results.push(edit);
-                }
+                checkResult(edit);
             }
         }
 
@@ -137,21 +126,16 @@ module.exports = function (dictionary) {
         for (i = 0; i <= word.length; i++) {
             for (j = 0; j < ALPHABETS.length; j++) {
                 edit = (word.slice(0, i) + ALPHABETS[j] + word.slice(i));
-                edit = lookup(edit, opts);
-                if (edit.found) {
-                    results.push(edit);
-                }
+                checkResult(edit);
             }
         }
 
         return results;
     }
 
-
     function equal(word) {
         return this.word === word.word;
     }
-
 
     function suggest(word, opts) {
 
@@ -196,7 +180,6 @@ module.exports = function (dictionary) {
 
 
     function fetchWords(subDict, prefix) {
-
         var key,
             results = [];
 
@@ -211,7 +194,6 @@ module.exports = function (dictionary) {
 
 
     function doSearch(prefix, subDict, opts) {
-
         var i,
             key,
             results = [];
@@ -231,22 +213,18 @@ module.exports = function (dictionary) {
         return results;
     }
 
-
     function search(prefix, opts) {
-
         var i,
             results = [],
             subDict = dict,
             word;
 
         opts = opts || {};
-
         if (opts.depth === undefined) {
             opts.depth = 3;
         }
 
         prefix = prefix.toString().toLowerCase().trim();
-
         for (i = 0; i < prefix.length && subDict; i++) {
             subDict = subDict[prefix[i]];
         }
@@ -256,9 +234,7 @@ module.exports = function (dictionary) {
         }
 
         results = doSearch(prefix, subDict, opts);
-
         word = lookup(prefix, {suggest: false});
-
         if (word.found) {
             results.push({word: prefix, rank: word.rank});
         }
@@ -269,8 +245,7 @@ module.exports = function (dictionary) {
 
 
     function build() {
-
-	if (dictionary === undefined) return;
+        if (dictionary === undefined) return;
         if (typeof dictionary === 'string') {
             var i,
                 words = dictionary.split(' ');
@@ -281,17 +256,16 @@ module.exports = function (dictionary) {
 
             dictionary = '';
         } else if (Array.isArray(dictionary)) {
-	    dictionary.forEach(function (elem) {
-		insert(elem, 1);
-	    });
-	    dictionary = '';
-	}
+            dictionary.forEach(function (elem) {
+                insert(elem, 1);
+            });
+            dictionary = '';
+        }
     }
 
     build();
 
     return {
-
         insert: insert,
         lookup: lookup,
         remove: remove,
