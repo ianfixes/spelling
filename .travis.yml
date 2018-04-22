@@ -1,3 +1,9 @@
 language: node_js
 node_js:
   - 'node'
+
+script:
+  - node --version
+  - npm --version
+  - npm run lint
+  - npm test

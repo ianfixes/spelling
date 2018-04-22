@@ -1,12 +1,12 @@
 {
   "name": "spelling",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A spelling checker that provides words suggestions, and the facility to search for words with a specific prefix.",
-  "repository": "ifreecarve/spelling",
+  "repository": "ianfixes/spelling",
   "author": {
     "name": "Ian Katz",
-    "email": "ifreecarve@gmail.com",
-    "url": "https://github.com/ifreecarve"
+    "email": "ianfixes@gmail.com",
+    "url": "https://github.com/ianfixes"
   },
   "contributors": [
     {
@@ -16,9 +16,9 @@
     }
   ],
   "bugs": {
-    "url": "https://github.com/ifreecarve/spelling/issues"
+    "url": "https://github.com/ianfixes/spelling/issues"
   },
-  "homepage": "https://github.com/ifreecarve/spelling",
+  "homepage": "https://github.com/ianfixes/spelling",
   "license": "MIT",
   "main": "index.js",
   "directories": {
@@ -26,6 +26,7 @@
   },
   "scripts": {
     "test": "mocha",
+    "lint": "eslint .",
     "posttest": "eslint ."
   },
   "engines": {

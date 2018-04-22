@@ -1,4 +1,4 @@
-spelling [![Build Status](https://travis-ci.org/ifreecarve/spelling.svg?branch=master)](https://travis-ci.org/ifreecarve/spelling) [![npm version](https://badge.fury.io/js/spelling.svg)](https://badge.fury.io/js/spelling)
+spelling [![Build Status](https://travis-ci.org/ianfixes/spelling.svg?branch=master)](https://travis-ci.org/ianfixes/spelling) [![npm version](https://badge.fury.io/js/spelling.svg)](https://badge.fury.io/js/spelling)
 ========
 
 > A spelling checker that provides words suggestions, and the facility to search for words with a specific prefix.
