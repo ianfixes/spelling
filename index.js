@@ -182,7 +182,7 @@ module.exports = function (dictionary) {
       results = [];
 
     for (key in subDict) {
-      if (subDict.hasOwnProperty(key) && subDict[key][ETX]) {
+      if (Object.prototype.hasOwnProperty.call(subDict, key) && subDict[key][ETX]) {
         results.push({ word: prefix + key, rank: subDict[key][ETX] });
       }
     }
@@ -202,7 +202,7 @@ module.exports = function (dictionary) {
     results = results.concat(fetchWords(subDict, prefix));
 
     for (key in subDict) {
-      if (subDict.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(subDict, key)) {
         results = results.concat(doSearch(prefix + key, subDict[key], { depth: opts.depth - 1 }));
       }
     }

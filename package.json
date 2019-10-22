@@ -44,7 +44,7 @@
   ],
   "devDependencies": {
     "chai": "*",
-    "eslint": "^3.19.0",
+    "eslint": "^6.5.1",
     "mocha": "*"
   }
 }
