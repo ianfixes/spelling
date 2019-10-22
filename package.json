@@ -1,6 +1,6 @@
 {
   "name": "spelling",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A spelling checker that provides words suggestions, and the facility to search for words with a specific prefix.",
   "repository": "ianfixes/spelling",
   "author": {
